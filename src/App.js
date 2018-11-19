@@ -1,28 +1,82 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import { connect } from 'react-redux';
+import axios from 'axios';
+
+import { simpleAction } from './actions/setPatientId';
+
 import './App.css';
 
+const patientIds = [
+  '58b3663e3425def0f0f6a229',
+  '58b3663e3425def0f0f6a4ce',
+  '58b367533425def0f023c20e',
+  '58b3663f3425def0f0f6c0fa'
+]
+
 class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      patients: []
+    }
+  }
+
+  componentDidMount() {
+    const patients = this.state.patients.map(patient => patient);
+
+    patientIds.forEach(id => {
+      axios.get(`https://syntheticmass.mitre.org/fhir/Patient/${id}`)
+        .then(res => {
+          const patient = res.data;
+          const name = patient.name.filter(name => name.use === "official")[0];
+
+          patients.push({
+            id: patient.id,
+            firstName: name.given,
+            lastName: name.family,
+            birthDate: patient.birthDate,
+            gender: patient.gender,
+            address: patient.address[0],
+          })
+
+          this.setState({ patients });
+        })
+    })
+  }
+
+  setPatientId = (id) => {
+    this.props.simpleAction(id);
+  }
+
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <ul>
+          {
+            this.state.patients.map(patient => {
+              return (
+                <li key={patient.id}>
+                  <h3>{patient.firstName} {patient.lastName}</h3>
+                  Sex: {patient.gender} <br/>
+                  Birth date: {patient.birthDate} <br/>
+                  <button onClick={() => this.setPatientId(patient.id)}>Make active</button>
+                </li>
+              )
+            })
+          }
+        </ul>
       </div>
     );
   }
 }
 
-export default App;
+const mapStateToProps = state => ({
+  ...state
+})
+
+const mapDispatchToProps = dispatch => ({
+  simpleAction: (val) => dispatch(simpleAction(val))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
