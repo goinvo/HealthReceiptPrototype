@@ -1,10 +1,10 @@
 
 export default (state = {}, action) => {
  switch (action.type) {
-  case 'SET_PATIENT_ID':
+  case 'SET_PATIENT':
    return {
      ...state,
-    patientId: action.value
+    patient: action.value
    }
   default:
    return state

@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
-import simpleReducer from './setPatientId'
+import setPatient from './setPatient'
 
 export default combineReducers({
-  simpleReducer
+  setPatient
 })
