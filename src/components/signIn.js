@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
+
+import Layout from './layout'
 
 import { setPatient } from '../actions/setPatient';
 
@@ -17,6 +19,7 @@ class SignIn extends Component {
     super(props);
 
     this.state = {
+      redirectToReferrer: false,
       patients: []
     }
   }
@@ -45,30 +48,44 @@ class SignIn extends Component {
   }
 
   setPatient = (patient) => {
+    this.setState({ redirectToReferrer: true });
     this.props.setPatient(patient);
   }
 
   render() {
+    const { redirectToReferrer } = this.state;
+
+    if (redirectToReferrer) {
+      return (
+        <Redirect to='/' />
+      )
+    }
+
     return (
-      <div className="App">
+      <Layout>
         <h1>Sign In</h1>
-        <ul className="box-list">
-          {
-            this.state.patients.map(patient => {
-              return (
-                <li key={patient.id}>
-                  <Link to="/" onClick={() => this.setPatient(patient)}>
-                    <h3>{patient.firstName} {patient.lastName}</h3>
-                    Sex: {patient.gender} <br/>
-                    Birth date: {patient.birthDate} <br/>
-                  </Link>
-                </li>
-              )
-            })
-          }
-        </ul>
-      </div>
-    );
+        {
+          this.state.patients.length ?
+            <ul className="box-list">
+              {
+                this.state.patients.map(patient => {
+                  return (
+                    <li key={patient.id}>
+                      <div onClick={() => this.setPatient(patient)}>
+                        <h3>{patient.firstName} {patient.lastName}</h3>
+                        Sex: {patient.gender} <br/>
+                        Birth date: {patient.birthDate} <br/>
+                      </div>
+                    </li>
+                  )
+                })
+              }
+            </ul>
+          :
+            <div>Loading...</div>
+        }
+      </Layout>
+    )
   }
 }
 

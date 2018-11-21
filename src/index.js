@@ -8,10 +8,12 @@ import './index.css';
 import { Routes } from './routes'
 import * as serviceWorker from './serviceWorker';
 
+const store = configureStore()
+
 ReactDOM.render(
-  <Provider store={configureStore()}>
+  <Provider store={store}>
     <Router>
-      <Routes />
+      <Routes store={store}/>
     </Router>
   </Provider>,
   document.getElementById('root')

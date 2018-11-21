@@ -1,18 +1,40 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom'
+import { Route, Redirect, Switch } from 'react-router-dom'
 
-import App from './App'
+import Home from './components/home'
 import SignIn from './components/signIn'
-import Patient from './components/patient'
+import Encounter from './components/encounter'
 import { NotFound } from './404'
 
-export const Routes = () => {
+function PrivateRoute({ component: Component, store, ...rest }) {
+  return (
+    <Route
+      {...rest}
+      render={props =>
+        store.getState().setPatient.patient ? (
+          <Component {...props} />
+        ) : (
+          <Redirect
+            to={{
+              pathname: "/sign-in",
+              state: { from: props.location }
+            }}
+          />
+        )
+      }
+    />
+  );
+}
+
+export const Routes = (props) => {
+  const store = props.store
+
   return (
     <div>
       <Switch>
-        <Route exact path="/" component={App} />
         <Route path="/sign-in" component={SignIn} />
-        <Route path="/patient/:patientId" component={Patient} />
+        <PrivateRoute exact path="/" component={Home} store={store} />
+        <PrivateRoute path="/encounter/:encounterId" component={Encounter} store={store} />
         <Route component={NotFound} />
       </Switch>
     </div>
