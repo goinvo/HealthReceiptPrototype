@@ -1,17 +1,26 @@
 import React from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom'
 
+import { setPatient } from './actions/setPatient'
+
 import Home from './components/home'
 import SignIn from './components/signIn'
 import Encounter from './components/encounter'
 import { NotFound } from './404'
 
 function PrivateRoute({ component: Component, store, ...rest }) {
+  const storePatient = store.getState().setPatient.patient
+  const cachedPatient = localStorage.getItem('patient')
+
+  if (cachedPatient && !storePatient) {
+    store.dispatch(setPatient(JSON.parse(cachedPatient)))
+  }
+
   return (
     <Route
       {...rest}
       render={props =>
-        store.getState().setPatient.patient ? (
+        (storePatient || cachedPatient) ? (
           <Component {...props} />
         ) : (
           <Redirect

@@ -25,7 +25,7 @@ class SignIn extends Component {
   }
 
   componentDidMount() {
-    const patients = this.state.patients.map(patient => patient);
+    const patients = []
 
     patientIds.forEach(id => {
       axios.get(`https://syntheticmass.mitre.org/fhir/Patient/${id}`)
@@ -42,13 +42,16 @@ class SignIn extends Component {
             address: patient.address[0],
           })
 
-          this.setState({ patients });
+          if (patients.length === patientIds.length) {
+            this.setState({ patients });
+          }
         })
     })
   }
 
   setPatient = (patient) => {
     this.setState({ redirectToReferrer: true });
+    localStorage.setItem('patient', JSON.stringify(patient))
     this.props.setPatient(patient);
   }
 
@@ -65,7 +68,7 @@ class SignIn extends Component {
       <Layout>
         <h1>Sign In</h1>
         {
-          this.state.patients.length ?
+          this.state.patients && this.state.patients.length ?
             <ul className="box-list">
               {
                 this.state.patients.map(patient => {

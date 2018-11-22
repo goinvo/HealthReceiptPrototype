@@ -8,7 +8,9 @@ import './index.css';
 import { Routes } from './routes'
 import * as serviceWorker from './serviceWorker';
 
-const store = configureStore()
+const persistedPatient = localStorage.getItem('patient') ? JSON.parse(localStorage.getItem('patient')) : {}
+
+const store = configureStore(persistedPatient)
 
 ReactDOM.render(
   <Provider store={store}>
