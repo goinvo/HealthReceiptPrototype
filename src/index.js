@@ -10,7 +10,13 @@ import * as serviceWorker from './serviceWorker';
 
 const persistedPatient = localStorage.getItem('patient') ? JSON.parse(localStorage.getItem('patient')) : {}
 
-const store = configureStore(persistedPatient)
+let store
+
+if (persistedPatient) {
+  store = configureStore(persistedPatient)
+} else {
+  store = configureStore()
+}
 
 ReactDOM.render(
   <Provider store={store}>

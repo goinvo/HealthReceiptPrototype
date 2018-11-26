@@ -9,7 +9,7 @@ import Encounter from './components/encounter'
 import { NotFound } from './404'
 
 function PrivateRoute({ component: Component, store, ...rest }) {
-  const storePatient = store.getState().setPatient.patient
+  const storePatient = store.getState().setPatient ? store.getState().setPatient.patient : undefined
   const cachedPatient = localStorage.getItem('patient')
 
   if (cachedPatient && !storePatient) {
@@ -20,7 +20,7 @@ function PrivateRoute({ component: Component, store, ...rest }) {
     <Route
       {...rest}
       render={props =>
-        (storePatient || cachedPatient) ? (
+        (cachedPatient || storePatient) ? (
           <Component {...props} />
         ) : (
           <Redirect

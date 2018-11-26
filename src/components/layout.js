@@ -6,19 +6,28 @@ class Layout extends Component {
   render() {
     return (
       <div className="app">
-        <header>
-          <nav>
-            <ul>
-              <li>
-                <Link to="/">Home</Link>
-              </li>
-              <li>
-                <Link to="/sign-in">Sign Out</Link>
-              </li>
-            </ul>
-          </nav>
+        <header className="header">
+          <div className="max-width">
+            <nav>
+              <ul className="nav-list">
+                <li>
+                  <Link to="/">Home</Link>
+                </li>
+                {
+                  this.props.patient ?
+                    <li className="nav-list__right">
+                      { this.props.patient.firstName  + ' ' + this.props.patient.lastName + '  ' }
+                      <Link to="/sign-in">Sign Out</Link>
+                    </li>
+                  : null
+                }
+              </ul>
+            </nav>
+          </div>
         </header>
-        { this.props.children }
+        <div className="content max-width">
+          { this.props.children }
+        </div>
       </div>
     )
   }

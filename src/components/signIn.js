@@ -25,7 +25,10 @@ class SignIn extends Component {
   }
 
   componentDidMount() {
-    const patients = []
+    this.props.setPatient(null)
+    localStorage.removeItem('patient')
+
+    let patients = []
 
     patientIds.forEach(id => {
       axios.get(`https://syntheticmass.mitre.org/fhir/Patient/${id}`)
@@ -35,7 +38,7 @@ class SignIn extends Component {
 
           patients.push({
             id: patient.id,
-            firstName: name.given,
+            firstName: name.given[0],
             lastName: name.family,
             birthDate: patient.birthDate,
             gender: patient.gender,
@@ -43,16 +46,17 @@ class SignIn extends Component {
           })
 
           if (patients.length === patientIds.length) {
-            this.setState({ patients });
+            patients = patients.sort((a, b) => (a.lastName > b.lastName) ? 1 : (b.lastName > a.lastName) ? -1 : 0);
+            this.setState({patients});
           }
         })
     })
   }
 
   setPatient = (patient) => {
-    this.setState({ redirectToReferrer: true });
     localStorage.setItem('patient', JSON.stringify(patient))
     this.props.setPatient(patient);
+    this.setState({ redirectToReferrer: true });
   }
 
   render() {
@@ -75,7 +79,7 @@ class SignIn extends Component {
                   return (
                     <li key={patient.id}>
                       <div onClick={() => this.setPatient(patient)}>
-                        <h3>{patient.firstName} {patient.lastName}</h3>
+                        <h3 className="no-margin--top">{patient.firstName} {patient.lastName}</h3>
                         Sex: {patient.gender} <br/>
                         Birth date: {patient.birthDate} <br/>
                       </div>
