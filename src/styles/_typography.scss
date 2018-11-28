@@ -1,0 +1,11 @@
+.text {
+  &--sm {
+    font-size: .8rem;
+  }
+  &--gray {
+    color: $color-gray;
+  }
+  &--uppercase {
+    text-transform: uppercase;
+  }
+}

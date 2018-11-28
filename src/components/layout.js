@@ -11,7 +11,7 @@ class Layout extends Component {
             <nav>
               <ul className="nav-list">
                 <li>
-                  <Link to="/">Home</Link>
+                  <Link to="/">Health Receipts</Link>
                 </li>
                 {
                   this.props.patient ?

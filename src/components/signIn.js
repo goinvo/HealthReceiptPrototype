@@ -73,13 +73,13 @@ class SignIn extends Component {
         <h1>Sign In</h1>
         {
           this.state.patients && this.state.patients.length ?
-            <ul className="box-list">
+            <ul className="list--box">
               {
                 this.state.patients.map(patient => {
                   return (
                     <li key={patient.id}>
                       <div onClick={() => this.setPatient(patient)}>
-                        <h3 className="no-margin--top">{patient.firstName} {patient.lastName}</h3>
+                        <h3 className="margin-none--top">{patient.firstName} {patient.lastName}</h3>
                         Sex: {patient.gender} <br/>
                         Birth date: {patient.birthDate} <br/>
                       </div>
