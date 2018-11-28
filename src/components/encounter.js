@@ -117,6 +117,10 @@ class Encounter extends Component {
   }
 
   render() {
+    const hasCarePlan = this.state.carePlans && this.state.carePlans.length
+    const hasNewMedications = this.state.newMedications && this.state.newMedications.length
+    const hasTreatmentPlan = hasCarePlan || hasNewMedications
+
     return (
       <Layout>
         <p>{this.props.patient.firstName} {this.props.patient.lastName}</p>
@@ -164,32 +168,35 @@ class Encounter extends Component {
 
 
         {
-          this.state.careplans && this.state.careplans.length ?
+          hasTreatmentPlan ?
             <div>
               <h4 className="text--uppercase text--gray">Treatment</h4>
-              <ul className="list--unstyled">
-                { this.state.careplans.map(plan => {
-                  return (
-                    <li>
-                      {plan.name}:
-                      <ul className="list--unstyled">
-                        {plan.activity.map(activity => <li>{activity}</li>)}
-                      </ul>
-                    </li>
-                  )
-                })}
-              </ul>
-            </div>
-          : null
-        }
-
-        {
-          this.state.newMedications && this.state.newMedications.length ?
-            <div>
-              <p>Begin taking these medications:</p>
-              <ul className="list--unstyled">
-                { this.state.newMedications.map(med => <li>{ med }</li>) }
-              </ul>
+              {
+                hasCarePlan ?
+                  <ul className="list--unstyled">
+                    { this.state.carePlans.map(plan => {
+                      return (
+                        <li>
+                          {plan.name}:
+                          <ul className="list--unstyled">
+                            {plan.activity.map(activity => <li>{activity}</li>)}
+                          </ul>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                : null
+              }
+              {
+                hasNewMedications ?
+                  <div>
+                    <p>Begin taking these medications:</p>
+                    <ul className="list--unstyled">
+                      { this.state.newMedications.map(med => <li>{ med }</li>) }
+                    </ul>
+                  </div>
+                : null
+              }
             </div>
           : null
         }
