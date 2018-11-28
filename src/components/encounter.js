@@ -15,6 +15,7 @@ class Encounter extends Component {
       observations: [],
       newMedications: [],
       procedures: [],
+      carePlans: [],
     }
   }
 
@@ -23,6 +24,10 @@ class Encounter extends Component {
       .then(res => {
         this.parseEncounterData(res.data.entry);
       })
+    axios.get(`https://syntheticmass.mitre.org/fhir/CarePlan?patient=${this.props.patient.id}`)
+      .then(res => {
+        this.parseCarePlanData(res.data.entry);
+      });
   }
 
   parseCondition = (condition) => {
@@ -55,15 +60,12 @@ class Encounter extends Component {
   }
 
   parseEncounterData = (data) => {
-    console.log(data)
-    let {
-      classType,
-      date,
-      conditions,
-      observations,
-      newMedications,
-      procedures,
-    } = this.state;
+    let classType = null,
+        date = null,
+        conditions = [],
+        observations = [],
+        newMedications = [],
+        procedures = [];
 
     data.forEach(({ resource }) => {
       switch (resource.resourceType) {
@@ -93,9 +95,25 @@ class Encounter extends Component {
       classType,
       date,
       conditions,
+      observations,
       newMedications,
       procedures,
     })
+  }
+
+  parseCarePlanData = (data) => {
+    let carePlans = []
+
+    data.forEach(({ resource }) => {
+      if (!resource.completed && resource.context.reference.replace('Encounter/', '') === this.props.match.params.encounterId) {
+        carePlans.push({
+          name: resource.category[0].coding[0].display,
+          activity: resource.activity.map(activity => activity.detail.code.coding[0].display),
+        })
+      }
+    })
+
+    this.setState({ carePlans })
   }
 
   render() {
@@ -144,15 +162,26 @@ class Encounter extends Component {
         <h4 className="text--uppercase text--gray">Summary</h4>
         <p>{this.props.patient.firstName} is eating healthy and has started to lower cholesterol and blood pressure, though values are still high. They need to focus on getting more exercise and managing stress.</p>
 
-        <h4 className="text--uppercase text--gray">Treatment</h4>
-        <ul className="list--unstyled">
-          <li>Reduce saturated fats</li>
-          <li>Reduce sodium</li>
-          <li>Reduce caffeine</li>
-          <li>Increase soluable fiber</li>
-          <li>Increase potassium</li>
-          <li>Vigorous exercise for 30 mins, 3x/week</li>
-        </ul>
+
+        {
+          this.state.careplans && this.state.careplans.length ?
+            <div>
+              <h4 className="text--uppercase text--gray">Treatment</h4>
+              <ul className="list--unstyled">
+                { this.state.careplans.map(plan => {
+                  return (
+                    <li>
+                      {plan.name}:
+                      <ul className="list--unstyled">
+                        {plan.activity.map(activity => <li>{activity}</li>)}
+                      </ul>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          : null
+        }
 
         {
           this.state.newMedications && this.state.newMedications.length ?
