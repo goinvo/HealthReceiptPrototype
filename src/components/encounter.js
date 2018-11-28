@@ -86,7 +86,7 @@ class Encounter extends Component {
         {
           this.state.newMedications && this.state.newMedications.length ?
             <div>
-              <h3>Your care plan:</h3>
+              <h3>Your care plan</h3>
               <b>Begin taking these medications</b>
               <ul>
                 { this.state.newMedications.map(med => <li>{ med }</li>) }
