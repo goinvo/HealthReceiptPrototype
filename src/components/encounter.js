@@ -104,7 +104,7 @@ class Encounter extends Component {
         <p>{this.props.patient.firstName} {this.props.patient.lastName}</p>
 
         <p>
-          How your visit went on { this.state.date }<br/>
+          How your { this.state.classType } visit went on { this.state.date }<br/>
           <span className="text--sm">with Dr. Surya Choudry, Arlington Family Health</span>
         </p>
 
